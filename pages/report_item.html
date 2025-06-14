@@ -34,13 +34,13 @@
       <div class="bg-white rounded-lg shadow-sm p-6">
         <form id="report-form" class="space-y-6">
           <div>
-            <label class="block text-sm font-medium text-gray-800 mb-2"
-              >Report Type</label
-            >
+            <label class="block text-sm font-medium text-gray-800 mb-2">Report Type</label>
             <div class="relative">
               <select
                 id="report-type"
+                name="reportType"
                 class="w-full bg-blue-900 text-white px-4 py-3 rounded-lg appearance-none dropdown-toggle cursor-pointer"
+                required
               >
                 <option value="" disabled selected>Select an Option</option>
                 <option value="lost">I Lost an Item</option>
@@ -49,44 +49,50 @@
             </div>
           </div>
           <div>
-            <label
-              class="block text-sm font-medium text-gray-800 mb-2"
-              id="item-label"
-              >What item?</label
-            >
+            <label class="block text-sm font-medium text-gray-800 mb-2" id="item-label">What item?</label>
             <input
               type="text"
               id="item-name"
+              name="itemName"
               placeholder="e.g., Brown leather wallet"
               class="w-full px-4 py-3 bg-gray-100 border-0 rounded-lg"
+              required
             />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-800 mb-2"
-              >Item Description</label
-            >
+            <label class="block text-sm font-medium text-gray-800 mb-2">Item Description</label>
             <textarea
               id="item-description"
+              name="itemDescription"
               rows="6"
               placeholder="Describe the item in detail..."
               class="w-full px-4 py-3 bg-gray-100 border-0 rounded-lg resize-none"
+              required
             ></textarea>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-800 mb-2"
-              >Location</label
-            >
-            <input
-              type="text"
-              id="location"
-              placeholder="e.g., GKM Building, 3rd Floor"
-              class="w-full px-4 py-3 bg-gray-100 border-0 rounded-lg"
-            />
+            <label class="block text-sm font-medium text-gray-800 mb-2">Location</label>
+            <div class="relative">
+              <select
+                id="location"  name="location"
+                class="w-full bg-gray-100 px-4 py-3 border-0 rounded-lg appearance-none"
+                required
+              >
+                <option value="" disabled selected>Pilih Lokasi</option>
+                <option value="gedung g">Gedung G</option>
+                <option value="gedung f">Gedung F</option>
+                <option value="gedung a">Gedung A</option>
+                <option value="musholla">Musholla</option>
+                <option value="gkm">GKM</option>
+                <option value="kantin">Kantin</option>
+                <option value="junction">Junction</option>
+                <option value="edutech">Edutech</option>
+                <option value="area parkir">Area Parkir</option>
+              </select>
+            </div>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-800 mb-2"
-              >Photos (Optional)</label
-            >
+            <label class="block text-sm font-medium text-gray-800 mb-2">Photos (Optional)</label>
             <div
               class="file-upload-area bg-gray-100 rounded-lg p-8 text-center cursor-pointer"
               id="file-upload"
@@ -105,6 +111,10 @@
               class="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-4 hidden"
             ></div>
           </div>
+
+          <p id="success-message" class="text-green-600 hidden mt-4 text-center font-semibold"></p>
+          <p id="error-message" class="text-red-500 hidden mt-4 text-center font-semibold"></p>
+
           <button
             type="submit"
             class="w-full bg-orange-500 text-white py-4 rounded-lg font-medium text-lg hover:bg-orange-600"

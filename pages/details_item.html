@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FILOTI - Detail Item</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Gaya loading spinner */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #3b82f6; /* Tailwind blue-500 */
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+  </head>
+  <body class="bg-gray-50 font-sans">
+    <div id="navbar-container"></div>
+
+    <main class="container mx-auto px-4 py-6 max-w-2xl">
+        <div id="loading-spinner" class="text-center py-20">
+            <div class="spinner mx-auto mb-4"></div>
+            <p class="text-gray-600">Memuat detail item...</p>
+        </div>
+        
+        <div id="item-detail-content" class="hidden">
+            <div class="bg-white rounded-lg shadow-sm p-4 lg:p-6 mb-6">
+                <div class="flex items-start space-x-4">
+                    <div id="item-avatar" class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 bg-gray-500">
+                        <span id="item-initials" class="text-white font-bold text-lg"></span>
+                    </div>
+
+                    <div class="flex-1">
+                        <h2 id="item-name" class="text-xl font-bold text-gray-800 mb-1"></h2>
+                        <div class="flex flex-wrap items-center gap-2 text-sm text-gray-500 mb-2">
+                            <span id="item-time"></span>
+                            <span id="item-location"></span>
+                            <span id="item-itemType"></span>
+                        </div>
+                        <h3 id="item-title" class="text-lg font-semibold text-gray-800 mt-2"></h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm p-4 lg:p-6 mb-6">
+                <img
+                    id="item-image"
+                    src=""
+                    alt=""
+                    class="w-full h-auto object-cover rounded-lg bg-gray-200"
+                />
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm p-4 lg:p-6 mb-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Description</h3>
+                <p id="item-description" class="text-gray-700 leading-relaxed"></p>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/navbar_loader.js"></script> 
+    
+    <script>
+        // Variabel global untuk menyimpan username admin
+        let currentAdminUsername = "Memuat Admin..."; // Default sementara saat memuat
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const mainContent = document.querySelector("main");
+            const loadingSpinner = document.getElementById("loading-spinner");
+            const itemDetailContent = document.getElementById("item-detail-content");
+
+            // --- Inisialisasi Navbar ---
+            const loader = new NavbarLoader({
+                navbarPath: "../components/navbar.html",
+                onLoad: function () {
+                    if (typeof FilotiNavbar !== "undefined") new FilotiNavbar();
+                    document.body.classList.add("navbar-loaded");
+                },
+                onError: function(error) {
+                    console.error('Gagal memuat navbar:', error);
+                    const navbarContainer = document.querySelector('#navbar-container');
+                    if (navbarContainer) {
+                        navbarContainer.innerHTML = '<div class="bg-red-100 text-red-700 p-4 text-center">Navigation could not be loaded</div>';
+                    }
+                }
+            });
+            loader.loadNavbarSimple();
+
+            // --- Fungsi untuk mengambil username dari backend ---
+            async function fetchAdminUsername() {
+                try {
+                    const response = await fetch('https://filoti-backend.vercel.app/me', {
+                        method: 'GET',
+                        credentials: 'include'
+                    });
+                    if (response.ok) {
+                        const userData = await response.json();
+                        currentAdminUsername = userData.username || "Unknown Admin";
+                    } else {
+                        console.warn('Failed to fetch admin username:', response.status);
+                        currentAdminUsername = "Admin (Belum Login)";
+                    }
+                } catch (error) {
+                    console.error('Error fetching admin username:', error);
+                    currentAdminUsername = "Admin (Kesalahan Jaringan)";
+                }
+            }
+
+            // --- Logika untuk Menampilkan Detail Barang dari Backend ---
+            async function displayItemDetails() {
+                loadingSpinner.classList.remove('hidden'); // Tampilkan spinner
+                itemDetailContent.classList.add('hidden'); // Sembunyikan konten
+
+                // 1. Ambil ID dari URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const itemId = urlParams.get("id"); // Ambil 'id' sebagai string
+
+                if (!itemId) {
+                    showError("ID barang tidak ditemukan di URL.");
+                    return;
+                }
+
+                // 2. Panggil fetchAdminUsername dulu
+                await fetchAdminUsername();
+
+                try {
+                    // 3. Fetch item dari backend
+                    const response = await fetch(`https://filoti-backend.vercel.app/posts/${itemId}`, {
+                        method: 'GET',
+                        credentials: 'include'
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({ message: response.statusText || "Gagal mengambil detail item." }));
+                        throw new Error(errorData.error || errorData.message);
+                    }
+
+                    const item = await response.json(); // Backend diharapkan mengembalikan objek tunggal
+
+                    // 4. Tampilkan data jika item ditemukan
+                    if (item && item.id) { // Pastikan item ada dan memiliki ID
+                        document.title = `FILOTI - ${item.title}`; // Update judul halaman
+
+                        // Isi data ke elemen HTML
+                        const itemAvatar = document.getElementById("item-avatar");
+                        // Asumsi backend tidak lagi mengirim avatarColor/initials
+                        itemAvatar.classList.remove('bg-gray-500'); // Hapus default
+                        itemAvatar.classList.add('bg-gray-500'); // Atur ulang ke warna default atau yang sesuai
+                        
+                        document.getElementById("item-initials").textContent = ''; // Initials dihilangkan
+                        document.getElementById("item-name").textContent = currentAdminUsername; // Nama admin dari sesi
+                        document.getElementById("item-time").textContent = `• ${new Date(item.created_at).toLocaleDateString("id-ID")}`;
+                        document.getElementById("item-location").textContent = `• ${item.ruangan}`; // Menggunakan 'ruangan' dari backend
+                        document.getElementById("item-title").textContent = item.title;
+                        document.getElementById("item-itemType").textContent = `• ${item.item_type}`; // Menggunakan 'item_type' dari backend
+                        document.getElementById("item-description").textContent = item.keterangan; // Menggunakan 'keterangan' dari backend
+
+                        const itemImage = document.getElementById("item-image");
+                        itemImage.src = item.image_url; // Menggunakan 'image_url' dari backend
+                        itemImage.alt = item.title;
+
+                        loadingSpinner.classList.add('hidden'); // Sembunyikan spinner
+                        itemDetailContent.classList.remove('hidden'); // Tampilkan konten
+                    } else {
+                        showError("Barang dengan ID tersebut tidak ditemukan.");
+                    }
+                } catch (error) {
+                    console.error('Error fetching item details:', error);
+                    showError(`Gagal memuat detail item. Error: ${error.message}.`);
+                }
+            }
+
+            function showError(message) {
+                loadingSpinner.classList.add('hidden'); // Sembunyikan spinner
+                itemDetailContent.classList.add('hidden'); // Sembunyikan konten
+                mainContent.innerHTML = `
+                    <div class="text-center py-20 bg-white rounded-lg shadow-sm p-6">
+                        <h1 class="text-2xl font-bold text-red-600">Error</h1>
+                        <p class="text-gray-600 mt-2">${message}</p>
+                        <a href="lost_item.html" class="mt-4 inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">Kembali ke Daftar</a>
+                    </div>
+                `;
+            }
+
+            // Panggil fungsi untuk menampilkan detail item saat DOM siap
+            displayItemDetails();
+        });
+    </script>
+  </body>
+</html>

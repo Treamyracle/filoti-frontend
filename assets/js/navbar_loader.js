@@ -5,13 +5,17 @@
 
 class NavbarLoader {
     constructor(options = {}) {
-        this.navbarPath = options.navbarPath || 'components/navbar.html';
+        this.navbarPath = options.navbarPath || ''; // Ini akan diset secara dinamis
         this.targetSelector = options.targetSelector || '#navbar-container';
         this.onLoad = options.onLoad || null;
         this.onError = options.onError || null;
     }
 
+    // Metode loadNavbar() dan loadNavbarSimple() tidak ada perubahan
+    // Kita akan fokus menggunakan loadNavbarSimple()
+
     async loadNavbar() {
+        // Metode ini tetap seperti yang Anda miliki, tanpa perubahan
         try {
             const response = await fetch(this.navbarPath);
             
@@ -21,23 +25,19 @@ class NavbarLoader {
 
             const html = await response.text();
             
-            // Parse HTML to extract navbar content
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
             
-            // Extract navbar elements
             const desktopNav = doc.querySelector('nav');
             const mobileHeader = doc.querySelector('header');
             const sidebarOverlay = doc.querySelector('#sidebar-overlay');
             const styles = doc.querySelector('style');
             
-            // Get target container
             const container = document.querySelector(this.targetSelector);
             if (!container) {
                 throw new Error(`Target container '${this.targetSelector}' not found`);
             }
 
-            // Add styles to head if not already present
             if (styles && !document.querySelector('style[data-navbar-styles]')) {
                 const styleElement = document.createElement('style');
                 styleElement.setAttribute('data-navbar-styles', 'true');
@@ -45,13 +45,11 @@ class NavbarLoader {
                 document.head.appendChild(styleElement);
             }
 
-            // Insert navbar elements
             container.innerHTML = '';
             if (desktopNav) container.appendChild(desktopNav.cloneNode(true));
             if (mobileHeader) container.appendChild(mobileHeader.cloneNode(true));
             if (sidebarOverlay) container.appendChild(sidebarOverlay.cloneNode(true));
 
-            // Extract and execute script
             const script = doc.querySelector('script');
             if (script) {
                 const scriptElement = document.createElement('script');
@@ -59,7 +57,6 @@ class NavbarLoader {
                 document.body.appendChild(scriptElement);
             }
 
-            // Call onLoad callback if provided
             if (this.onLoad && typeof this.onLoad === 'function') {
                 this.onLoad();
             }
@@ -70,7 +67,6 @@ class NavbarLoader {
         } catch (error) {
             console.error('Error loading navbar:', error);
             
-            // Call onError callback if provided
             if (this.onError && typeof this.onError === 'function') {
                 this.onError(error);
             }
@@ -79,7 +75,7 @@ class NavbarLoader {
         }
     }
 
-    // Alternative method using innerHTML (simpler but less flexible)
+    // Metode loadNavbarSimple() tetap seperti yang Anda miliki, tanpa perubahan
     async loadNavbarSimple() {
         try {
             const response = await fetch(this.navbarPath);
@@ -90,21 +86,17 @@ class NavbarLoader {
 
             const html = await response.text();
             
-            // Extract body content from navbar file
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
             const bodyContent = doc.body.innerHTML;
             
-            // Get target container
             const container = document.querySelector(this.targetSelector);
             if (!container) {
                 throw new Error(`Target container '${this.targetSelector}' not found`);
             }
 
-            // Insert content
             container.innerHTML = bodyContent;
 
-            // Add styles if not already present
             const styles = doc.querySelector('style');
             if (styles && !document.querySelector('style[data-navbar-styles]')) {
                 const styleElement = document.createElement('style');
@@ -113,7 +105,6 @@ class NavbarLoader {
                 document.head.appendChild(styleElement);
             }
 
-            // Execute script
             const scripts = doc.querySelectorAll('script');
             scripts.forEach(script => {
                 if (script.textContent.trim()) {
@@ -123,7 +114,6 @@ class NavbarLoader {
                 }
             });
 
-            // Call onLoad callback if provided
             if (this.onLoad && typeof this.onLoad === 'function') {
                 this.onLoad();
             }
@@ -134,7 +124,6 @@ class NavbarLoader {
         } catch (error) {
             console.error('Error loading navbar:', error);
             
-            // Call onError callback if provided
             if (this.onError && typeof this.onError === 'function') {
                 this.onError(error);
             }
@@ -149,20 +138,49 @@ document.addEventListener('DOMContentLoaded', function() {
     const navbarContainer = document.querySelector('#navbar-container');
     
     if (navbarContainer) {
-        const loader = new NavbarLoader({
-            onLoad: function() {
-                // Navbar loaded successfully
-                document.body.classList.add('navbar-loaded');
-            },
-            onError: function(error) {
-                // Handle error
-                console.warn('Navbar could not be loaded:', error.message);
-                navbarContainer.innerHTML = '<div class="bg-red-100 text-red-700 p-4 text-center">Navigation could not be loaded</div>';
+        async function initDynamicNavbarLoad() {
+            let navbarPath = '../components/navbar_guest.html'; // Default ke Guest Navbar
+
+            try {
+                const response = await fetch('https://filoti-backend.vercel.app/me', { // Panggil endpoint /me
+                    method: 'GET',
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    const userData = await response.json();
+                    if (userData && userData.is_admin) {
+                        navbarPath = '../components/navbar_admin.html'; // Jika admin, ganti path ke Admin Navbar
+                        console.log('User is Admin. Loading navbar_admin.html');
+                    } else {
+                        console.log('User is not Admin. Loading navbar_guest.html');
+                    }
+                } else {
+                    console.warn(`Failed to fetch user status (${response.status}). Loading navbar_guest.html as fallback.`);
+                    // Tetap gunakan guest navbar jika ada masalah autentikasi/response tidak OK
+                }
+            } catch (error) {
+                console.error('Network error fetching user status. Loading navbar_guest.html as fallback:', error);
+                // Tetap gunakan guest navbar jika ada error jaringan
             }
-        });
+
+            const loader = new NavbarLoader({
+                navbarPath: navbarPath, // Gunakan path yang sudah ditentukan secara dinamis
+                onLoad: function() {
+                    // Setelah navbar dimuat dan FilotiNavbar class di dalamnya dieksekusi,
+                    // ini akan menandakan bahwa navbar telah selesai diinisialisasi.
+                    document.body.classList.add('navbar-loaded');
+                },
+                onError: function(error) {
+                    console.warn('Navbar could not be loaded:', error.message);
+                    navbarContainer.innerHTML = '<div class="bg-red-100 text-red-700 p-4 text-center">Navigation could not be loaded</div>';
+                }
+            });
+            
+            await loader.loadNavbarSimple(); // Pastikan loading selesai sebelum melanjutkan
+        }
         
-        // Try simple method first, fallback to complex method if needed
-        loader.loadNavbarSimple();
+        initDynamicNavbarLoad(); // Panggil fungsi untuk memulai proses loading dinamis
     }
 });
 
