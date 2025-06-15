@@ -5,7 +5,7 @@
 
 class NavbarLoader {
     constructor(options = {}) {
-        this.navbarPath = options.navbarPath || '../components/navbar.html'; // Ini akan diset secara dinamis
+        this.navbarPath = options.navbarPath || '../components/navbar_admin.html'; // Ini akan diset secara dinamis
         this.targetSelector = options.targetSelector || '#navbar-container';
         this.onLoad = options.onLoad || null;
         this.onError = options.onError || null;
@@ -151,16 +151,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     const userData = await response.json();
                     if (userData && userData.is_admin) {
                         navbarPath = '../components/navbar_admin.html'; // Jika admin, ganti path ke Admin Navbar
-                        console.log('User is Admin. Loading navbar_admin.html');
+                        console.log('User is Admin. Loading navbar_admin');
                     } else {
-                        console.log('User is not Admin. Loading navbar_guest.html');
+                        console.log('User is not Admin. Loading navbar_guest');
                     }
                 } else {
-                    console.warn(`Failed to fetch user status (${response.status}). Loading navbar_guest.html as fallback.`);
+                    console.warn(`Failed to fetch user status (${response.status}). Loading navbar_guest as fallback.`);
                     // Tetap gunakan guest navbar jika ada masalah autentikasi/response tidak OK
                 }
             } catch (error) {
-                console.error('Network error fetching user status. Loading navbar_guest.html as fallback:', error);
+                console.error('Network error fetching user status. Loading navbar_guest as fallback:', error);
                 // Tetap gunakan guest navbar jika ada error jaringan
             }
 
