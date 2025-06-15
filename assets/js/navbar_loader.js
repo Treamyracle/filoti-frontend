@@ -5,7 +5,7 @@
 
 class NavbarLoader {
     constructor(options = {}) {
-        this.navbarPath = options.navbarPath || '../components/navbar_admin.html'; // Ini akan diset secara dinamis
+        this.navbarPath = options.navbarPath || ''; // Ini akan diset secara dinamis
         this.targetSelector = options.targetSelector || '#navbar-container';
         this.onLoad = options.onLoad || null;
         this.onError = options.onError || null;
