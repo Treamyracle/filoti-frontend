@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 const navbarContainer = document.querySelector('#navbar-container'); 
     if (typeof NavbarLoader !== 'undefined' && navbarContainer) { 
         const loader = new NavbarLoader({
-            navbarPath: "../components/navbar", // Ganti dengan path default yang diharapkan
+            navbarPath: "../components/navbar_admin.html", // Ganti dengan path default yang diharapkan
             onLoad: function () {
                 // Setelah navbar selesai dimuat oleh NavbarLoader, tampilkan kontainernya
                 if (navbarContainer) {

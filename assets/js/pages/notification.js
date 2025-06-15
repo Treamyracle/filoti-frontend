@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Bagian NavbarLoader (tetap sama)
     if (typeof NavbarLoader !== 'undefined') {
         const loader = new NavbarLoader({
-            navbarPath: "../components/navbar_admin", // Sesuaikan path ini
+            navbarPath: "../components/navbar_admin.html", // Sesuaikan path ini
             onLoad: function () {
                 if (typeof FilotiNavbar !== "undefined") {
                     new FilotiNavbar();
