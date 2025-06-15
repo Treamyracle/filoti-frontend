@@ -5,67 +5,173 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FILOTI - Bukti Pengambilan</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Gaya untuk menyembunyikan kontainer navbar sampai dimuat */
+        #navbar-container {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, visibility 0s 0.3s;
+        }
+        #navbar-container.loaded {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
+        }
+        /* Tambahan gaya dasar navbar (jika tidak ada di CSS global) */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 2px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+        .sidebar-overlay { transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; }
+        .sidebar { transition: transform 0.3s ease-in-out; }
+    </style>
 </head>
 <body class="bg-gray-50 font-sans">
     <div id="navbar-container"></div>
 
     <main class="container mx-auto px-4 py-6 max-w-2xl">
         <div class="mb-6">
-            <p class="text-sm text-gray-500"><a href="history" class="hover:underline">History</a> > <span id="breadcrumb-details">Details</span> > Bukti</p>
+            <p class="text-sm text-gray-500"><a href="history.html" class="hover:underline">History</a> > <span id="breadcrumb-details">Details</span> > Bukti</p>
         </div>
         
         <div id="proof-content">
-            </div>
+            <p class="text-center text-gray-500">Memuat bukti pengambilan...</p>
+        </div>
     </main>
 
-    <script src="../assets/js/data_manager.js"></script>
-    <script src="../assets/js/data.js"></script>
     <script src="../assets/js/navbar_loader.js"></script>
-    
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Muat Navbar
-            new NavbarLoader({ navbarPath: "../components/navbar", onLoad: () => new FilotiNavbar() }).loadNavbarSimple();
+        // Fungsi helper untuk membuat permintaan terautentikasi (diulang di sini untuk demo)
+        // Sebaiknya ini dipindahkan ke file helper.js global jika digunakan di banyak tempat.
+        async function makeAuthenticatedRequest(url, method = 'GET', body = null) {
+            const token = localStorage.getItem('jwt_token');
+            if (!token) {
+                alert('Anda tidak terautentikasi. Silakan login.');
+                window.location.href = 'login.html';
+                throw new Error('No authentication token found.');
+            }
 
-            // Logika Halaman
+            const headers = {
+                'Authorization': `Bearer ${token}`
+            };
+            if (body) {
+                headers['Content-Type'] = 'application/json';
+            }
+
+            const options = {
+                method: method,
+                headers: headers,
+                body: body ? JSON.stringify(body) : null,
+            };
+
+            try {
+                const response = await fetch(url, options);
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || response.statusText);
+                }
+                return data;
+            } catch (error) {
+                throw new Error(`Network/API Error: ${error.message}`);
+            }
+        }
+
+
+        document.addEventListener("DOMContentLoaded", async function () { // Gunakan async function
+            // Muat Navbar. NavbarLoader global akan menginisialisasi FilotiNavbar
+            if (typeof NavbarLoader !== 'undefined') {
+                const navbarContainer = document.querySelector('#navbar-container');
+                const loader = new NavbarLoader({
+                    navbarPath: "../components/navbar_guest.html", // Default path
+                    onLoad: function () {
+                        if (navbarContainer) {
+                            navbarContainer.classList.add('loaded'); // Tampilkan navbar
+                        }
+                    },
+                    onError: function (error) {
+                        console.error('Gagal memuat navbar:', error);
+                        if (navbarContainer) {
+                            navbarContainer.innerHTML = '<div class="bg-red-100 text-red-700 p-4 text-center">Navigation could not be loaded</div>';
+                            navbarContainer.classList.add('loaded');
+                        }
+                    }
+                });
+                await loader.loadNavbarSimple(); // Tunggu navbar dimuat
+            }
+
+            // Logika Halaman Bukti Pengambilan
             const urlParams = new URLSearchParams(window.location.search);
-            const itemId = parseInt(urlParams.get('id'));
-            const allHistoryItems = loadItems('allItems', allItems);
-            const item = allHistoryItems.find(i => i.id === itemId);
+            const itemId = urlParams.get('id'); // ID dari URL adalah string
+
             const contentContainer = document.getElementById('proof-content');
 
-            if (item) {
-                document.title = `FILOTI - Bukti: ${item.title}`;
-                document.getElementById('breadcrumb-details').innerHTML = `<a href="history_details?id=${item.id}" class="hover:underline">Details</a>`;
+            if (!itemId) {
+                contentContainer.innerHTML = '<p class="text-center text-red-500">ID Item tidak ditemukan di URL.</p>';
+                return;
+            }
+
+            try {
+                // Ambil data item dari backend. Endpoint /posts/:id adalah publik.
+                const response = await fetch(`https://filoti-backend.vercel.app/posts/${itemId}`, {
+                    method: 'GET',
+                    // credentials: 'include' // Tidak perlu credentials jika endpoint memang publik
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `Gagal memuat detail item: ${response.status}`);
+                }
+
+                const item = await response.json();
                 
-                contentContainer.innerHTML = `
-                    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-4">Bukti Pengambilan untuk "${item.title}"</h2>
-                        <div class="border-t border-gray-200 pt-4">
-                            <dl class="space-y-4">
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Nama Pengklaim</dt>
-                                    <dd class="mt-1 text-lg font-semibold text-gray-900">${item.claimer.name}</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Bukti yang Diberikan</dt>
-                                    <dd class="mt-1 text-gray-700 bg-gray-50 p-4 rounded-md">${item.claimer.proofText}</dd>
-                                </div>
-                            </dl>
+                // Akses status item. Dalam respons backend, 'status' adalah objek yang berisi detail status.
+                const itemStatus = item.status && typeof item.status === 'object' ? item.status.status : item.status; 
+
+                if (item && itemStatus === 0) { // Hanya tampilkan jika item ditemukan dan statusnya 'done' (0)
+                    document.title = `FILOTI - Bukti: ${item.title}`;
+                    // Breadcrumb link ke detail history
+                    document.getElementById('breadcrumb-details').innerHTML = `<a href="history_details.html?id=${item.id}" class="hover:underline">Details</a>`;
+                    
+                    // claimerName dan proofImageUrl diambil dari objek item.status
+                    const claimerName = item.status && item.status.claimer_name ? item.status.claimer_name : 'Tidak Diketahui';
+                    const proofImageUrl = item.status && item.status.proof_image ? item.status.proof_image : 'https://via.placeholder.com/600x400?text=Tidak+Ada+Bukti';
+
+                    contentContainer.innerHTML = `
+                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">Bukti Pengambilan untuk "${item.title}"</h2>
+                            <div class="border-t border-gray-200 pt-4">
+                                <dl class="space-y-4">
+                                    <div>
+                                        <dt class="text-sm font-medium text-gray-500">Nama Pengklaim</dt>
+                                        <dd class="mt-1 text-lg font-semibold text-gray-900">${claimerName}</dd>
+                                    </div>
+                                    <div>
+                                        <dt class="text-sm font-medium text-gray-500">Foto Bukti</dt>
+                                        <dd class="mt-1">
+                                            ${proofImageUrl && proofImageUrl !== 'https://via.placeholder.com/600x400?text=Tidak+Ada+Bukti' ? 
+                                                `<img src="${proofImageUrl}" alt="Foto Bukti" class="w-full h-auto object-cover rounded-lg bg-gray-200" />` : 
+                                                `<p class="text-gray-600">Tidak ada foto bukti yang disediakan.</p>`
+                                            }
+                                        </dd>
+                                    </div>
+                                </dl>
+                            </div>
                         </div>
-                    </div>
-                     <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4">Foto Bukti (Jika Ada)</h3>
-                        <img src="${item.claimer.proofImage}" alt="Foto Bukti" class="w-full h-auto object-cover rounded-lg bg-gray-200" />
-                    </div>
-                    <div class="mt-6">
-                        <button onclick="window.history.back()" class="flex items-center space-x-2 text-gray-600 hover:text-gray-800">
-                          <span>&larr; Kembali</span>
-                        </button>
-                    </div>
-                `;
-            } else {
-                contentContainer.innerHTML = '<p>Item not found.</p>';
+                        <div class="mt-6">
+                            <button onclick="window.history.back()" class="flex items-center space-x-2 text-gray-600 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-lg px-3 py-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                <span>Kembali</span>
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    contentContainer.innerHTML = '<p class="text-center text-red-500">Item tidak ditemukan atau laporan ini belum diselesaikan.</p>';
+                }
+            } catch (error) {
+                console.error('Error loading proof details:', error);
+                contentContainer.innerHTML = `<p class="text-center text-red-500">Gagal memuat detail bukti: ${error.message}.</p>`;
             }
         });
     </script>
