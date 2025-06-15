@@ -5,41 +5,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FILOTI - Edit Item</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Gaya untuk menyembunyikan kontainer navbar sampai dimuat */
+        #navbar-container {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, visibility 0s 0.3s;
+        }
+        #navbar-container.loaded {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        /* Gaya tambahan untuk select dropdown agar terlihat konsisten */
+        .custom-select-wrapper {
+            position: relative;
+        }
+        .custom-select-wrapper::after {
+            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>');
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            width: 1rem;
+            height: 1rem;
+            color: #4a5568; /* Tailwind gray-700 */
+        }
+        /* Hapus default arrow di beberapa browser */
+        select.custom-arrow-none {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+    </style>
   </head>
   <body class="bg-gray-50 font-sans">
     <div id="navbar-container"></div>
+
     <main class="container mx-auto px-4 py-6 max-w-2xl">
       <div id="edit-content">
         <div class="bg-white rounded-lg shadow-sm p-6">
           <h2 class="text-2xl font-bold text-gray-800 mb-6">Edit Laporan</h2>
           <form id="edit-form" class="space-y-6">
             <div>
-              <label class="block text-sm font-medium">Judul Laporan</label>
+              <label class="block text-sm font-medium text-gray-700">Judul Laporan</label>
               <input
                 type="text"
                 id="item-title"
-                class="w-full mt-1 px-4 py-3 bg-gray-100 rounded-lg"
+                class="w-full mt-1 px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label class="block text-sm font-medium">Deskripsi</label>
+              <label class="block text-sm font-medium text-gray-700">Deskripsi</label>
               <textarea
                 id="item-description"
                 rows="6"
-                class="w-full mt-1 px-4 py-3 bg-gray-100 rounded-lg resize-none"
+                class="w-full mt-1 px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
               ></textarea>
             </div>
             <div>
-              <label class="block text-sm font-medium">Lokasi</label>
-              <input
-                type="text"
-                id="location"
-                class="w-full mt-1 px-4 py-3 bg-gray-100 rounded-lg"
-              />
+              <label class="block text-sm font-medium text-gray-700">Lokasi</label>
+              <div class="custom-select-wrapper">
+                <select
+                  id="location"
+                  class="w-full mt-1 px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg custom-arrow-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  </select>
+              </div>
             </div>
             <button
               type="submit"
-              class="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700"
+              class="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               Update Informasi
             </button>
@@ -55,44 +93,44 @@
           <button
             type="button"
             id="mark-done-btn"
-            class="w-full mt-4 bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700"
+            class="w-full mt-4 bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
           >
             Tandai sebagai Selesai
           </button>
           <button
             type="button"
             id="delete-btn"
-            class="w-full mt-4 bg-red-600 text-white py-3 rounded-lg font-medium hover:bg-red-700"
+            class="w-full mt-4 bg-red-600 text-white py-3 rounded-lg font-medium hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
           >
             Hapus Laporan Ini
           </button>
 
-          <div id="claimer-form" class="hidden mt-6 pt-6 border-t">
-            <h4 class="text-lg font-semibold">Data Pengambil/Penemu Barang</h4>
+          <div id="claimer-form" class="hidden mt-6 pt-6 border-t border-gray-200">
+            <h4 class="text-lg font-semibold text-gray-800">Data Pengambil/Penemu Barang</h4>
             <div class="space-y-4 mt-4">
               <div>
-                <label class="block text-sm font-medium">Nama Lengkap</label>
+                <label class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
                 <input
                   type="text"
                   id="claimer-name"
                   placeholder="Nama lengkap..."
-                  class="w-full mt-1 px-4 py-3 bg-gray-100 rounded-lg"
+                  class="w-full mt-1 px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium"
+                <label class="block text-sm font-medium text-gray-700"
                   >Foto Bukti (Opsional)</label
                 >
                 <input
                   type="file"
                   id="claimer-proof-photo"
-                  class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 />
               </div>
               <button
                 type="button"
                 id="confirm-done-btn"
-                class="w-full bg-orange-500 text-white py-3 rounded-lg font-medium hover:bg-orange-600"
+                class="w-full bg-orange-500 text-white py-3 rounded-lg font-medium hover:bg-orange-600 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
               >
                 Konfirmasi & Selesaikan
               </button>
@@ -102,9 +140,7 @@
       </div>
     </main>
 
-    <script src="../assets/js/data_manager.js"></script>
-    <script src="../assets/js/data.js"></script>
     <script src="../assets/js/navbar_loader.js"></script>
     <script src="../assets/js/pages/edit_item.js"></script>
-  </body>
+    </body>
 </html>
