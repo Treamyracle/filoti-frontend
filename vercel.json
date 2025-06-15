@@ -1,0 +1,28 @@
+{
+  "rewrites": [
+    { "source": "/index", "destination": "/pages/index.html" },
+    { "source": "/lost_item", "destination": "/pages/lost_item.html" },
+    { "source": "/find_item", "destination": "/pages/find_item.html" },
+    { "source": "/details_item", "destination": "/pages/details_item.html" },
+    { "source": "/edit_item", "destination": "/pages/edit_item.html" },
+    { "source": "/history", "destination": "/pages/history.html" },
+    { "source": "/history_details", "destination": "/pages/history_details.html" },
+    { "source": "/history_details_bukti", "destination": "/pages/history_details_bukti.html" },
+    { "source": "/login", "destination": "/pages/login.html" },
+    { "source": "/notification", "destination": "/pages/notification.html" },
+    { "source": "/report_item", "destination": "/pages/report_item.html" },
+    
+    { "source": "/assets/(.*)", "destination": "/assets/$1" },
+    { "source": "/components/(.*)", "destination": "/components/$1" },
+
+    { "source": "/", "destination": "/pages/login.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "max-age=0, public, s-maxage=300" }
+      ]
+    }
+  ]
+}
