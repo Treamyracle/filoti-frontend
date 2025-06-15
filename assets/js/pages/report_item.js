@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!response.ok) {
                 console.warn("REPORT_ITEM_JS: Sesi tidak valid atau tidak ada, mengalihkan ke halaman login.");
                 // Redirect ke halaman login jika sesi tidak valid
-                window.location.href = 'login.html'; 
+                window.location.href = 'login'; 
                 return false;
             }
             console.log("REPORT_ITEM_JS: Sesi valid.");
@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("REPORT_ITEM_JS: Kesalahan saat memvalidasi sesi:", error);
             showMessage(errorMessageDiv, "Kesalahan jaringan saat memvalidasi sesi. Mohon coba lagi.", false);
             // Anda mungkin ingin tetap mengalihkan ke login jika ada kesalahan jaringan saat validasi sesi
-            // window.location.href = 'login.html';
+            // window.location.href = 'login';
             return false;
         }
     }
@@ -223,9 +223,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 setTimeout(() => {
                     setLoadingState(false);
                     if (reportTypeValue === 'lost') {
-                        window.location.href = 'lost_item.html';
+                        window.location.href = 'lost_item';
                     } else {
-                        window.location.href = 'find_item.html';
+                        window.location.href = 'find_item';
                     }
                 }, 2000);
 
@@ -256,7 +256,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // --- Bagian NavbarLoader (tidak berubah) ---
     if (typeof NavbarLoader !== 'undefined') {
         const loader = new NavbarLoader({
-            navbarPath: "../components/navbar_admin.html",
+            navbarPath: "../components/navbar_admin",
             onLoad: () => {
                 if (typeof FilotiNavbar !== "undefined") {
                     new FilotiNavbar();

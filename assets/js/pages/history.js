@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 itemType: post.item_type,
                 status: post.status,
                 ruangan: post.ruangan, // Teruskan juga properti ruangan
-                detailsLink: "history_details.html"
+                detailsLink: "history_details"
             };
             itemsContainerHistory.innerHTML += createHistoryItem(item);
         });
@@ -210,7 +210,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Bagian NavbarLoader tidak berubah
     if (typeof NavbarLoader !== 'undefined') {
         const loader = new NavbarLoader({
-            navbarPath: "../components/navbar_admin.html",
+            navbarPath: "../components/navbar_admin",
             onLoad: function () {
                 if (typeof FilotiNavbar !== "undefined") {
                     new FilotiNavbar();

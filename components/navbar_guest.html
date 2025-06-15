@@ -49,10 +49,10 @@
         </div>
         <div class="flex items-center space-x-6">
 
-            <a href="lost_item.html" class="nav-link text-gray-700 hover:text-blue-600 transition-colors" data-page="lost-items">Lost Items</a>
-            <a href="find_item.html" class="nav-link text-gray-700 hover:text-blue-600 transition-colors" data-page="found-items">Found Items</a>
+            <a href="lost_item" class="nav-link text-gray-700 hover:text-blue-600 transition-colors" data-page="lost-items">Lost Items</a>
+            <a href="find_item" class="nav-link text-gray-700 hover:text-blue-600 transition-colors" data-page="found-items">Found Items</a>
             
-            <a href="notification.html" class="nav-link text-gray-700 hover:text-blue-600 transition-colors" data-page="notification">Notification</a>
+            <a href="notification" class="nav-link text-gray-700 hover:text-blue-600 transition-colors" data-page="notification">Notification</a>
             
             <button id="desktop-auth-button" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                 Login
@@ -99,13 +99,13 @@
                 </div>
 
                 <nav class="space-y-4">
-                    <a href="lost_item.html" class="mobile-nav-link block py-3 px-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors" data-page="lost-items">
+                    <a href="lost_item" class="mobile-nav-link block py-3 px-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors" data-page="lost-items">
                         Lost Items
                     </a>
-                    <a href="find_item.html" class="mobile-nav-link block py-3 px-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors" data-page="found-items">
+                    <a href="find_item" class="mobile-nav-link block py-3 px-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors" data-page="found-items">
                         Found Items
                     </a>
-                    <a href="notification.html" class="mobile-nav-link block py-3 px-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors" data-page="notification">
+                    <a href="notification" class="mobile-nav-link block py-3 px-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors" data-page="notification">
                         Notification
                     </a>
                     <div class="pt-4 border-t border-gray-200">
@@ -146,7 +146,7 @@
                     if (response.ok) {
                         this.currentUser = await response.json();
                         // Jika ternyata user login sebagai admin setelah navbar guest dimuat (misal, refresh halaman),
-                        // maka navigasi halaman akan memuat navbar_admin.html di halaman berikutnya.
+                        // maka navigasi halaman akan memuat navbar_admin di halaman berikutnya.
                         // Di sini, kita hanya perlu tahu statusnya untuk tombol Login/Logout.
                     } else {
                         this.currentUser = { id: null, username: "Guest", is_admin: false };
@@ -179,14 +179,14 @@
                     // Tombol sudah Login secara default di HTML, hanya perlu pastikan onclick-nya benar
                     if (desktopAuthButton) {
                         desktopAuthButton.textContent = 'Login';
-                        desktopAuthButton.onclick = () => window.location.href = 'login.html';
+                        desktopAuthButton.onclick = () => window.location.href = 'login';
                         desktopAuthButton.classList.remove('bg-red-600', 'hover:bg-red-700'); // Pastikan warna default
                         desktopAuthButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
                     }
                     if (mobileAuthButton) {
                         mobileAuthButton.textContent = 'Login';
                         mobileAuthButton.onclick = () => {
-                            window.location.href = 'login.html';
+                            window.location.href = 'login';
                             this.closeSidebar();
                         };
                         mobileAuthButton.classList.remove('bg-red-600', 'hover:bg-red-700'); // Pastikan warna default
@@ -204,7 +204,7 @@
 
                     if (response.ok) {
                         console.log('Successfully logged out.');
-                        window.location.href = 'login.html'; 
+                        window.location.href = 'login'; 
                     } else {
                         const errorData = await response.json();
                         console.error('Logout failed:', errorData.error);
@@ -291,16 +291,16 @@
                 console.log("Current page:", currentPage); // Debugging log
                 
                 const pageMap = {
-                    'lost_item.html': 'lost-items',
+                    'lost_item': 'lost-items',
                     '': 'lost-items',
-                    'find_item.html': 'found-items',
-                    'details_item.html': 'found-items',
-                    'history.html': 'history', // Tetap ada di map meskipun di navbar guest tidak ditampilkan
-                    'history_details.html': 'history',
-                    'history_details_bukti.html': 'history',
-                    'report_item.html': 'report-item', // Tetap ada di map meskipun di navbar guest tidak ditampilkan
-                    'notification.html': 'notification',
-                    'edit_item.html':'report-item'
+                    'find_item': 'found-items',
+                    'details_item': 'found-items',
+                    'history': 'history', // Tetap ada di map meskipun di navbar guest tidak ditampilkan
+                    'history_details': 'history',
+                    'history_details_bukti': 'history',
+                    'report_item': 'report-item', // Tetap ada di map meskipun di navbar guest tidak ditampilkan
+                    'notification': 'notification',
+                    'edit_item':'report-item'
                 };
 
                 const activePage = pageMap[currentPage] || 'lost-items';

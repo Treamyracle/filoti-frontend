@@ -63,7 +63,7 @@
       document.addEventListener("DOMContentLoaded", function () {
         // --- Inisialisasi Navbar ---
         const loader = new NavbarLoader({
-          navbarPath: "../components/navbar.html",
+          navbarPath: "../components/navbar",
           onLoad: function () {
             if (typeof FilotiNavbar !== "undefined") new FilotiNavbar();
             document.body.classList.add("navbar-loaded");
@@ -113,7 +113,7 @@
             <div class="text-center py-20">
               <h1 class="text-2xl font-bold text-red-600">Error 404</h1>
               <p class="text-gray-600">Barang dengan ID tersebut tidak ditemukan.</p>
-              <a href="find_item.html" class="mt-4 inline-block bg-blue-600 text-white px-6 py-2 rounded-lg">Kembali ke Daftar</a>
+              <a href="find_item" class="mt-4 inline-block bg-blue-600 text-white px-6 py-2 rounded-lg">Kembali ke Daftar</a>
             </div>
           `;
         }

@@ -26,8 +26,8 @@ document.addEventListener("DOMContentLoaded", function () {
             // Admin: Tampilkan tombol "View Details" dan "Edit", serta judul + deskripsi lengkap
             buttonHTML = `
                 <div class="flex items-center space-x-2">
-                    <a href="details_item.html?id=${item.id}" class="bg-blue-900 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800">View Details</a>
-                    <a href="edit_item.html?id=${item.id}" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg text-sm hover:bg-gray-300">Edit</a>
+                    <a href="details_item?id=${item.id}" class="bg-blue-900 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800">View Details</a>
+                    <a href="edit_item?id=${item.id}" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg text-sm hover:bg-gray-300">Edit</a>
                 </div>
             `;
             itemMainText = `<h3 class="font-semibold text-gray-800">${item.title}</h3><p class="text-gray-600 text-sm mb-3">${item.keterangan}</p>`;
@@ -237,7 +237,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const navbarContainer = document.querySelector('#navbar-container'); 
     if (typeof NavbarLoader !== 'undefined' && navbarContainer) { 
         const loader = new NavbarLoader({
-            navbarPath: "../components/navbar_admin.html", // Default path yang diharapkan, akan diganti oleh initDynamicNavbarLoad di navbar_loader.js
+            navbarPath: "../components/navbar_admin", // Default path yang diharapkan, akan diganti oleh initDynamicNavbarLoad di navbar_loader.js
             onLoad: function () {
                 // Callback ini dipanggil setelah konten navbar disuntikkan ke #navbar-container
                 if (navbarContainer) {
@@ -254,7 +254,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
         // Panggil loader.loadNavbarSimple(). Ini akan memicu fetch ke /me di navbar_loader.js
-        // untuk menentukan navbar_admin.html atau navbar_guest.html yang akan dimuat.
+        // untuk menentukan navbar_admin atau navbar_guest yang akan dimuat.
         loader.loadNavbarSimple(); 
     } else {
         console.log("NavbarLoader global mungkin sudah bekerja, atau #navbar-container tidak ditemukan.");

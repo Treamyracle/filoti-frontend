@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 const navbarContainer = document.querySelector('#navbar-container'); 
     if (typeof NavbarLoader !== 'undefined' && navbarContainer) { 
         const loader = new NavbarLoader({
-            navbarPath: "../components/navbar.html", // Ganti dengan path default yang diharapkan
+            navbarPath: "../components/navbar", // Ganti dengan path default yang diharapkan
             onLoad: function () {
                 // Setelah navbar selesai dimuat oleh NavbarLoader, tampilkan kontainernya
                 if (navbarContainer) {
@@ -152,7 +152,7 @@ const navbarContainer = document.querySelector('#navbar-container');
             }
 
             alert('Informasi berhasil diperbarui!');
-            window.location.href = itemToEdit.item_type === 'lost' ? 'lost_item.html' : 'find_item.html';
+            window.location.href = itemToEdit.item_type === 'lost' ? 'lost_item' : 'find_item';
 
         } catch (error) {
             console.error('Error updating item:', error);
@@ -223,7 +223,7 @@ const navbarContainer = document.querySelector('#navbar-container');
             }
 
             alert('Laporan berhasil diselesaikan dan dipindahkan ke histori.');
-            window.location.href = 'history.html';
+            window.location.href = 'history';
 
         } catch (error) {
             console.error('Error marking post as done:', error);
@@ -248,7 +248,7 @@ const navbarContainer = document.querySelector('#navbar-container');
                 }
                 
                 alert('Laporan berhasil dihapus.');
-                window.location.href = 'lost_item.html'; 
+                window.location.href = 'lost_item'; 
                 
             } catch (error) {
                 console.error('Error deleting item:', error);

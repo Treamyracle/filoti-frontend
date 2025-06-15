@@ -63,7 +63,7 @@
                     if (response.ok) {
                         showMessage('Login admin berhasil! Mengarahkan...', 'success');
                         // Redirect ke halaman utama atau dashboard setelah login
-                        window.location.href = 'lost_item.html'; 
+                        window.location.href = 'lost_item'; 
                     } else {
                         showMessage(data.error || 'Login admin gagal.', 'error');
                     }
@@ -85,7 +85,7 @@
                     if (response.ok) {
                         showMessage('Login guest berhasil! Mengarahkan...', 'success');
                         // Redirect ke halaman utama atau halaman guest
-                        window.location.href = 'lost_item.html'; 
+                        window.location.href = 'lost_item'; 
                     } else {
                         showMessage(data.error || 'Login guest gagal.', 'error');
                     }

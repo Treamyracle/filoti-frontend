@@ -11,7 +11,7 @@
 
     <main class="container mx-auto px-4 py-6 max-w-2xl">
         <div class="mb-6">
-            <p class="text-sm text-gray-500"><a href="history.html" class="hover:underline">History</a> > <span id="breadcrumb-details">Details</span> > Bukti</p>
+            <p class="text-sm text-gray-500"><a href="history" class="hover:underline">History</a> > <span id="breadcrumb-details">Details</span> > Bukti</p>
         </div>
         
         <div id="proof-content">
@@ -25,7 +25,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             // Muat Navbar
-            new NavbarLoader({ navbarPath: "../components/navbar.html", onLoad: () => new FilotiNavbar() }).loadNavbarSimple();
+            new NavbarLoader({ navbarPath: "../components/navbar", onLoad: () => new FilotiNavbar() }).loadNavbarSimple();
 
             // Logika Halaman
             const urlParams = new URLSearchParams(window.location.search);
@@ -36,7 +36,7 @@
 
             if (item) {
                 document.title = `FILOTI - Bukti: ${item.title}`;
-                document.getElementById('breadcrumb-details').innerHTML = `<a href="history_details.html?id=${item.id}" class="hover:underline">Details</a>`;
+                document.getElementById('breadcrumb-details').innerHTML = `<a href="history_details?id=${item.id}" class="hover:underline">Details</a>`;
                 
                 contentContainer.innerHTML = `
                     <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
