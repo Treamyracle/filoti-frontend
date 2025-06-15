@@ -31,7 +31,7 @@
 
     <main class="container mx-auto px-4 py-6 max-w-2xl">
         <div class="mb-6">
-            <p class="text-sm text-gray-500"><a href="history.html" class="hover:underline">History</a> > Details</p>
+            <p class="text-sm text-gray-500"><a href="history" class="hover:underline">History</a> > Details</p>
         </div>
         
         <div id="details-content">
@@ -47,7 +47,7 @@
             const token = localStorage.getItem('jwt_token');
             if (!token) {
                 alert('Anda tidak terautentikasi. Silakan login.');
-                window.location.href = 'login.html';
+                window.location.href = 'login';
                 throw new Error('No authentication token found.');
             }
 
@@ -171,7 +171,7 @@
                             <p class="text-gray-700 leading-relaxed mb-4">
                                 Laporan ini sudah diselesaikan. Barang berhasil dikembalikan/diambil oleh <strong>${claimerName}</strong>.
                             </p>
-                            <a href="history_details_bukti.html?id=${item.id}" class="w-full block text-center bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition-colors">
+                            <a href="history_details_bukti?id=${item.id}" class="w-full block text-center bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition-colors">
                                 Lihat Bukti Pengambilan
                             </a>
                         </div>
